@@ -78,18 +78,31 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
+      - name: Run Liquibase Migrations
+        run: |-
+          mvn liquibase:update \
+            -Dliquibase.url="${{ secrets.DB_URL_STAGING }}" \
+            -Dliquibase.username="${{ secrets.DB_USERNAME_STAGING }}" \
+            -Dliquibase.password="${{ secrets.DB_PASSWORD_STAGING }}" \
+            -Dliquibase.changeLogFile=src/main/resources/db/changelog/db.changelog-master.xml \
+            -Dliquibase.driver=org.postgresql.Driver
+
       - name: Build and push container image
         run: |-
           gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging
 
       - name: Deploy to Cloud Run
         id: deploy
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: paylink-system-staging
-          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging
-          region: ${{ secrets.GCP_REGION }}
-          platform: managed
-          allow-unauthenticated: true
-          env_vars: SPRING_PROFILES_ACTIVE=staging,DB_URL_STAGING=${{ secrets.DB_URL_STAGING }},DB_USERNAME_STAGING=${{ secrets.DB_USERNAME_STAGING }},DB_PASSWORD_STAGING=${{ secrets.DB_PASSWORD_STAGING }},JWT_SECRET_STAGING=${{ secrets.JWT_SECRET_STAGING }},ALLOWED_URL_STAGING=${{ secrets.ALLOWED_URL_STAGING }},REDIS_HOST_STAGING=${{ secrets.REDIS_HOST_STAGING }},REDIS_PORT_STAGING=${{ secrets.REDIS_PORT_STAGING }},REDIS_PASSWORD_STAGING=${{ secrets.REDIS_PASSWORD_STAGING }}
-          timeout: 900s
+        run: |-
+          gcloud run deploy paylink-system-staging \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging \
+            --region ${{ secrets.GCP_REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --timeout 900 \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 1 \
+            --update-env-vars SPRING_PROFILES_ACTIVE=staging,SPRING_DATASOURCE_URL=${{ secrets.DB_URL_STAGING }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME_STAGING }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD_STAGING }},JWT_SECRET=${{ secrets.JWT_SECRET_STAGING }},ALLOWED_URL=${{ secrets.ALLOWED_URL_STAGING }},REDIS_HOST=${{ secrets.REDIS_HOST_STAGING }},REDIS_PORT=${{ secrets.REDIS_PORT_STAGING }},REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD_STAGING }} \
+            --quiet
