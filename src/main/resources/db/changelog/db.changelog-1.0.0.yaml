@@ -1,0 +1,278 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0.0__initiate-tag
+      author: mrifqyz
+      changes:
+        - tagDatabase:
+            tag: 1.0.0
+
+  - changeSet:
+      id: 1.0.0__01-create-client
+      author: mrifqyz
+      comment: "Creates client table to store login user access"
+      changes:
+        - createTable:
+            tableName: client
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: "now()"
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: client_id
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(64)
+              - column:
+                  name: email
+                  type: VARCHAR(24)
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: shared_key
+                  type: VARCHAR(255)
+      rollback:
+        - dropTable:
+            tableName: client
+
+  - changeSet:
+      id: 1.0.0__02-create-customer
+      author: mrifqyz
+      comment: "Creates customer table to store transaction customer"
+      changes:
+        - createTable:
+            tableName: customer
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: "now()"
+              - column:
+                  name: name
+                  type: VARCHAR(64)
+              - column:
+                  name: phone_no
+                  type: VARCHAR(24)
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+      rollback:
+        - dropTable:
+            tableName: customer
+
+  - changeSet:
+      id: 1.0.0__03-create-payment-method
+      author: mrifqyz
+      comment: "Creates payment method table to store list possible payment method"
+      changes:
+        - createTable:
+            tableName: payment_method
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: "now()"
+              - column:
+                  name: name
+                  type: VARCHAR(64)
+              - column:
+                  name: code
+                  type: VARCHAR(64)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: category
+                  type: VARCHAR(32)
+      rollback:
+        - dropTable:
+            tableName: payment_method
+
+  - changeSet:
+      id: 1.0.0__04-create-transaction
+      author: mrifqyz
+      comment: "Creates transaction table to store transaction data "
+      changes:
+        - createTable:
+            tableName: transaction
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: "now()"
+              - column:
+                  name: invoice_number
+                  type: VARCHAR(128)
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+              - column:
+                  name: amount
+                  type: bigint
+              - column:
+                  name: token_id
+                  type: VARCHAR(64)
+              - column:
+                  name: original_request
+                  type: JSONB
+              - column:
+                  name: line_items
+                  type: JSONB
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_client_transaction
+                    references: client(id)
+              - column:
+                  name: customer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_client_customer
+                    references: customer(id)
+      rollback:
+        - dropTable:
+            tableName: transaction
+
+  - changeSet:
+      id: 1.0.0__05-create-client-payment-method
+      author: mrifqyz
+      comment: "Creates client payment method table for store client and payment method relations"
+      changes:
+        - createTable:
+            tableName: client_payment_method
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: "now()"
+              - column:
+                  name: additional_info
+                  type: JSONB
+              - column:
+                  name: is_active
+                  type: bool
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_client_payment_method_client
+                    references: client(id)
+              - column:
+                  name: payment_method_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_client_payment_method_payment_method
+                    references: payment_method(id)
+      rollback:
+        - dropTable:
+            tableName: client_payment_method
+
+  - changeSet:
+      id: 1.0.0__06-create-transaction-history
+      author: mrifqyz
+      comment: "Creates transaction history table to store transaction history "
+      changes:
+        - createTable:
+            tableName: transaction_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  defaultValueComputed: "now()"
+              - column:
+                  name: unique_reference_number
+                  type: VARCHAR(128)
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+              - column:
+                  name: client_payment_method_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transaction_history_client_payment_method
+                    references: client_payment_method(id)
+              - column:
+                  name: transaction_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transaction_history_transaction
+                    references: transaction(id)
+      rollback:
+        - dropTable:
+            tableName: transaction_history

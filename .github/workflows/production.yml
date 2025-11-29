@@ -1,0 +1,101 @@
+name: Production CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build
+        run: mvn -B package -DskipTests --file pom.xml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paylink-system
+          path: target/paylink-system-0.0.1-SNAPSHOT.jar
+
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: paylink-system
+          path: target
+
+      - name: Test
+        run: mvn -B verify --file pom.xml
+
+  deploy-main:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Build and push container image
+        run: |-
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: paylink-system
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system
+          region: ${{ secrets.GCP_REGION }}
+          platform: managed
+          allow-unauthenticated: true
+
+      - name: Run Liquibase
+        if: github.event.inputs.run_liquibase == 'true'
+        env:
+          DB_URL_PROD: ${{ secrets.DB_URL_PROD }}
+          DB_USERNAME_PROD: ${{ secrets.DB_USERNAME_PROD }}
+          DB_PASSWORD_PROD: ${{ secrets.DB_PASSWORD_PROD }}
+        run: mvn -B -Pliquibase-prod liquibase:update
