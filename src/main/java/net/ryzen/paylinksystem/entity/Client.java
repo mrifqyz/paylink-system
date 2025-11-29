@@ -43,4 +43,10 @@ public class Client {
 
     @Column(name = "shared_key")
     private String sharedKey;
+
+    @Column(name = "redirect_url")
+    private String redirectUrl;
+
+    @Column(name = "default_expired")
+    private Integer defaultExpired;
 }

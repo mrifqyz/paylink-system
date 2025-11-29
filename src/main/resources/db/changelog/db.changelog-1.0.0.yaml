@@ -43,13 +43,19 @@ databaseChangeLog:
                   type: VARCHAR(64)
               - column:
                   name: email
-                  type: VARCHAR(24)
+                  type: VARCHAR(64)
               - column:
                   name: password
                   type: VARCHAR(255)
               - column:
                   name: shared_key
                   type: VARCHAR(255)
+              - column:
+                  name: redirect_url
+                  type: VARCHAR(255)
+              - column:
+                  name: default_expired
+                  type: INT
       rollback:
         - dropTable:
             tableName: client
@@ -162,6 +168,9 @@ databaseChangeLog:
                   name: token_id
                   type: VARCHAR(64)
               - column:
+                  name: request_id
+                  type: VARCHAR(64)
+              - column:
                   name: original_request
                   type: JSONB
               - column:
@@ -212,7 +221,7 @@ databaseChangeLog:
                   type: JSONB
               - column:
                   name: is_active
-                  type: bool
+                  type: BOOLEAN
               - column:
                   name: client_id
                   type: BIGINT
