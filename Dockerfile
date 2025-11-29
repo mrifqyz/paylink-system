@@ -7,7 +7,7 @@ COPY src ./src
 
 RUN mvn -B clean package -DskipTests
 
-FROM amazoncorretto:17-alpine-jre
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
