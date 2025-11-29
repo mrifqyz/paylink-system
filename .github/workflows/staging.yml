@@ -85,6 +85,7 @@ jobs:
             -Dliquibase.username="${{ secrets.DB_USERNAME_STAGING }}" \
             -Dliquibase.password="${{ secrets.DB_PASSWORD_STAGING }}" \
             -Dliquibase.changeLogFile=src/main/resources/db/master.changelog.yaml \
+            -Dliquibase.searchPath=src/main/resources \
             -Dliquibase.driver=org.postgresql.Driver
 
       - name: Build and push container image
