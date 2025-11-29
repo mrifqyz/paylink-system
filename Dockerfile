@@ -15,4 +15,4 @@ COPY --from=builder /app/target/paylink-system-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "paylink-system-0.0.1-SNAPSHOT.jar"]
+CMD ["sh", "-c", "java $JAVA_OPTS -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE -jar paylink-system-0.0.1-SNAPSHOT.jar"]
