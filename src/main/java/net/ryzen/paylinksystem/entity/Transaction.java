@@ -55,6 +55,9 @@ public class Transaction {
     @Column(name = "token_id")
     private String tokenId;
 
+    @Column(name = "request_id")
+    private String requestId;
+
     @Type(JsonBinaryType.class)
     @Column(name = "line_items", columnDefinition = "jsonb")
     private List<Object> lineItems;
