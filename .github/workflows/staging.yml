@@ -92,6 +92,7 @@ jobs:
           platform: managed
           allow-unauthenticated: true
           env_vars: |
+            SPRING_PROFILES_ACTIVE=staging
             DB_URL_STAGING=${{ secrets.DB_URL_STAGING }}
             DB_USERNAME_STAGING=${{ secrets.DB_USERNAME_STAGING }}
             DB_PASSWORD_STAGING=${{ secrets.DB_PASSWORD_STAGING }}

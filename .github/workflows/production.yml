@@ -92,6 +92,7 @@ jobs:
           platform: managed
           allow-unauthenticated: true
           env_vars: |
+            SPRING_PROFILES_ACTIVE=production
             DB_URL_PROD=${{ secrets.DB_URL_PROD }}
             DB_USERNAME_PROD=${{ secrets.DB_USERNAME_PROD }}
             DB_PASSWORD_PROD=${{ secrets.DB_PASSWORD_PROD }}
