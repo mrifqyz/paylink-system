@@ -7,7 +7,7 @@ COPY src ./src
 
 RUN mvn -B clean package -DskipTests
 
-FROM openjdk:17-alpine
+FROM amazoncorretto:17-alpine-jre
 
 WORKDIR /app
 
