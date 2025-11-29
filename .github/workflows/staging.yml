@@ -91,13 +91,7 @@ jobs:
           region: ${{ secrets.GCP_REGION }}
           platform: managed
           allow-unauthenticated: true
-          env_vars: |
-            SPRING_PROFILES_ACTIVE=staging
-            DB_URL_STAGING=${{ secrets.DB_URL_STAGING }}
-            DB_USERNAME_STAGING=${{ secrets.DB_USERNAME_STAGING }}
-            DB_PASSWORD_STAGING=${{ secrets.DB_PASSWORD_STAGING }}
-            JWT_SECRET_STAGING=${{ secrets.JWT_SECRET_STAGING }}
-            ALLOWED_URL_STAGING=${{ secrets.ALLOWED_URL_STAGING }}
+          env_vars: SPRING_PROFILES_ACTIVE=staging,DB_URL_STAGING=${{ secrets.DB_URL_STAGING }},DB_USERNAME_STAGING=${{ secrets.DB_USERNAME_STAGING }},DB_PASSWORD_STAGING=${{ secrets.DB_PASSWORD_STAGING }},JWT_SECRET_STAGING=${{ secrets.JWT_SECRET_STAGING }},ALLOWED_URL_STAGING=${{ secrets.ALLOWED_URL_STAGING }}
 
       - name: Run Liquibase
         env:
