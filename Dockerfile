@@ -7,7 +7,7 @@ COPY src ./src
 
 RUN mvn -B clean package -DskipTests
 
-FROM openjdk:17-jre-slim
+FROM openjdk:17-alpine
 
 WORKDIR /app
 
