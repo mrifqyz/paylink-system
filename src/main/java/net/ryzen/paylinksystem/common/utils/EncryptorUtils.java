@@ -35,7 +35,7 @@ public class EncryptorUtils {
         }
     }
 
-    public Long decrypt(String encryptedId) {
+    public String decrypt(String encryptedId) {
         if (encryptedId == null || encryptedId.isEmpty()) {
             return null;
         }
@@ -49,7 +49,7 @@ public class EncryptorUtils {
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivSpec);
 
             byte[] original = cipher.doFinal(Base64.getDecoder().decode(decodedParam));
-            return Long.parseLong(new String(original));
+            return new String(original);
         } catch (Exception ex) {
             throw new RuntimeException("Error decrypting data", ex);
         }
