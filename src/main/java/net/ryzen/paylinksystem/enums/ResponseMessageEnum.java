@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ResponseMessageEnum {
-    WRONG_USER_CREDENTIALS("Invalid username or password", HttpStatus.BAD_REQUEST),
+    WRONG_USER_CREDENTIALS("Invalid email or password", HttpStatus.BAD_REQUEST),
     USER_ALREADY_EXISTS("Email already registered and active", HttpStatus.BAD_REQUEST),
     REGISTER_PASSWORD_NOT_MATCH("Password not match", HttpStatus.BAD_REQUEST),
     UNREGISTERED_USER("User is not registered in database. Please contact administrator", HttpStatus.FORBIDDEN),

@@ -3,6 +3,7 @@ package net.ryzen.paylinksystem.module.auth.services.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.ryzen.paylinksystem.common.jwt.JwtUtils;
+import net.ryzen.paylinksystem.common.utils.EncryptorUtils;
 import net.ryzen.paylinksystem.dto.JwtUtilsResponseDTO;
 import net.ryzen.paylinksystem.entity.Client;
 import net.ryzen.paylinksystem.enums.ResponseMessageEnum;
@@ -23,6 +24,7 @@ public class LoginServiceImpl implements LoginService {
     private final JwtUtils jwtUtils;
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EncryptorUtils encryptorUtils;
     @Override
     public LoginResponseDTO execute(LoginRequestDTO request) {
 
@@ -31,8 +33,10 @@ public class LoginServiceImpl implements LoginService {
         }
 
         Client client = getClient(request.getEmail());
+        log.info(encryptorUtils.decrypt(client.getSharedKey()));
+
+        validatePassword(request, client);
         try {
-            validatePassword(request, client);
 
             JwtUtilsResponseDTO accessTokenData = jwtUtils.generateToken(client);
 
