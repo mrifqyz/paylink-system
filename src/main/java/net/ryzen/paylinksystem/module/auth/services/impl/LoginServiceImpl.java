@@ -7,6 +7,7 @@ import net.ryzen.paylinksystem.dto.JwtUtilsResponseDTO;
 import net.ryzen.paylinksystem.entity.Client;
 import net.ryzen.paylinksystem.enums.ResponseMessageEnum;
 import net.ryzen.paylinksystem.exception.InvalidDataException;
+import net.ryzen.paylinksystem.module.auth.common.EmailCheckerUtils;
 import net.ryzen.paylinksystem.module.auth.dto.request.LoginRequestDTO;
 import net.ryzen.paylinksystem.module.auth.dto.response.LoginResponseDTO;
 import net.ryzen.paylinksystem.module.auth.services.contract.LoginService;
@@ -24,6 +25,11 @@ public class LoginServiceImpl implements LoginService {
     private final PasswordEncoder passwordEncoder;
     @Override
     public LoginResponseDTO execute(LoginRequestDTO request) {
+
+        if (!EmailCheckerUtils.isEmail(request.getEmail())){
+            throw new InvalidDataException(ResponseMessageEnum.INVALID_DATA.getMessage().formatted("email"));
+        }
+
         Client client = getClient(request.getEmail());
         try {
             validatePassword(request, client);

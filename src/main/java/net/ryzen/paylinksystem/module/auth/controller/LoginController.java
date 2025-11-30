@@ -19,18 +19,8 @@ public class LoginController {
     private final ServiceExecutor serviceExecutor;
 
     @PostMapping("/login")
-    public ResponseEntity<?> doLogin(@RequestBody LoginRequestDTO request,
-                                         HttpServletRequest servletRequest) {
+    public ResponseEntity<?> doLogin(@RequestBody LoginRequestDTO request) {
         log.info("doLogin: {}", request);
-        request.setIpAddress(getIpAddress(servletRequest));
         return ResponseEntity.status(HttpStatus.OK).body(serviceExecutor.execute(LoginService.class, request));
-    }
-
-    private String getIpAddress(HttpServletRequest request) {
-        String ipAddress = request.getHeader("x-forwarded-for");
-        if (ipAddress != null && !ipAddress.isEmpty()) {
-            return ipAddress.split(",")[0];
-        }
-        return request.getRemoteAddr();
     }
 }

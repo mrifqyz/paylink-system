@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 @Component
-public class IdEncryptorUtils {
+public class EncryptorUtils {
 
     @Value("${encryption.aes.key}")
     private String key;
@@ -17,8 +17,8 @@ public class IdEncryptorUtils {
     @Value("${encryption.aes.iv}")
     private String iv;
 
-    public String encrypt(Long id) {
-        if (id == null) {
+    public String encrypt(String data) {
+        if (data == null) {
             return null;
         }
         try {
@@ -28,10 +28,10 @@ public class IdEncryptorUtils {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivSpec);
 
-            byte[] encrypted = cipher.doFinal(id.toString().getBytes());
+            byte[] encrypted = cipher.doFinal(data.toString().getBytes());
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception ex) {
-            throw new RuntimeException("Error encrypting ID", ex);
+            throw new RuntimeException("Error encrypting data", ex);
         }
     }
 
@@ -51,7 +51,7 @@ public class IdEncryptorUtils {
             byte[] original = cipher.doFinal(Base64.getDecoder().decode(decodedParam));
             return Long.parseLong(new String(original));
         } catch (Exception ex) {
-            throw new RuntimeException("Error decrypting ID", ex);
+            throw new RuntimeException("Error decrypting data", ex);
         }
     }
 }

@@ -13,5 +13,4 @@ import net.ryzen.paylinksystem.base.request.ServiceRequest;
 public class LoginRequestDTO implements ServiceRequest {
     private String email;
     private String password;
-    private String ipAddress;
 }

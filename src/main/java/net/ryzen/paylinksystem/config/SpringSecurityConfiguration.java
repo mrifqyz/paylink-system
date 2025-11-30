@@ -43,7 +43,7 @@ public class SpringSecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/refresh-token", "/auth/utils/encrypt", "/paylink/**").permitAll()
+                        .requestMatchers("/dashboard/auth/login", "/dashboard/auth/register", "/paylink/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
