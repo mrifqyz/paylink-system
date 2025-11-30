@@ -81,6 +81,6 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     private String generateSharedKey() {
-        return encryptorUtils.encrypt(ClientCredentialsUtils.generateClientId(dashboardAuthProperties.getClientIdPrefix()));
+        return encryptorUtils.encrypt(ClientCredentialsUtils.generateSharedKey(dashboardAuthProperties.getSharedKeyPrefix()));
     }
 }
