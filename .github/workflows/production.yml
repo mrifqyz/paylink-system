@@ -1,9 +1,18 @@
 name: Production CI/CD
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      run_liquibase:
+        description: 'Run Liquibase migration'
+        required: true
+        type: boolean
+        default: false
+      deploy:
+        description: 'Deploy to production'
+        required: true
+        type: boolean
+        default: false
   pull_request:
     branches:
       - main
@@ -55,7 +64,7 @@ jobs:
         run: mvn -B verify --file pom.xml
 
   deploy-main:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -70,19 +79,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Build and test
+        run: mvn -B verify --file pom.xml
+
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
+      - name: Run Liquibase
+        if: github.event.inputs.run_liquibase == 'true'
+        env:
+          DB_URL_PROD: ${{ secrets.DB_URL_PROD }}
+          DB_USERNAME_PROD: ${{ secrets.DB_USERNAME_PROD }}
+          DB_PASSWORD_PROD: ${{ secrets.DB_PASSWORD_PROD }}
+        run: mvn -B -Pliquibase-prod liquibase:update
+
       - name: Set up Cloud SDK
+        if: github.event.inputs.deploy == 'true'
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Build and push container image
+        if: github.event.inputs.deploy == 'true'
         run: |-
           gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system
 
       - name: Deploy to Cloud Run
+        if: github.event.inputs.deploy == 'true'
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v1
         with:
