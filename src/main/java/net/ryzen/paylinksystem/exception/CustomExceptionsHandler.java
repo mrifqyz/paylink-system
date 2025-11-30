@@ -31,6 +31,13 @@ public class CustomExceptionsHandler {
         return setResponse(ex.getStatus(), ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidDataException.class)
+    public final ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
+        log.error("Handle InvalidDataException => {}\n{} ", ex.getMessage(), this.getLogException(ex));
+
+        return setResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     private String getLogException(Exception e) {
         return Arrays.stream(e.getStackTrace()).limit(limitLogError).map(StackTraceElement::toString).collect(Collectors.joining("\n"));
     }
