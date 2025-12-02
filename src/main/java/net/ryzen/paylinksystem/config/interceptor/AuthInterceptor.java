@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
     private final JwtUtils jwtUtils;
-    @Value("${paylink.system.allowed-url}")
+    @Value("${paylink.system.allowed-public-endpoint}")
     private List<String> publicUrls;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findFirstByEmailAndIsActive(String email, Boolean isActive);
     Optional<Client> findFirstByClientIdAndIsActive(String clientId, Boolean isActive);
+    Optional<Client> findByClientId(String clientId);
 }

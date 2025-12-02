@@ -66,7 +66,7 @@ public class Transaction {
     @Column(name = "expired_date")
     private Date expiredDate;
 
-    @Column(name = "trx_due_date")
+    @Column(name = "transaction_due_date")
     private Integer transactionDueDate;
 
     @Column(name = "currency")
