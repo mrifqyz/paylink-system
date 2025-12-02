@@ -1,5 +1,6 @@
 package net.ryzen.paylinksystem.module.checkout.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -21,7 +22,8 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GeneratePaymentLinkRequestDTO implements ServiceRequest {
-    private String source;
+    @JsonIgnore
+    private String clientEmail;
     private HeadersDTO headers;
     private TransactionDTO transaction;
     private List<ItemDTO> items;

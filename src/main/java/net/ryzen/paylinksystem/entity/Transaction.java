@@ -5,6 +5,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import net.ryzen.paylinksystem.module.checkout.dto.ItemDTO;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 
@@ -60,5 +61,14 @@ public class Transaction {
 
     @Type(JsonBinaryType.class)
     @Column(name = "line_items", columnDefinition = "jsonb")
-    private List<Object> lineItems;
+    private List<ItemDTO> lineItems;
+
+    @Column(name = "expired_date")
+    private Date expiredDate;
+
+    @Column(name = "trx_due_date")
+    private Integer transactionDueDate;
+
+    @Column(name = "currency")
+    private String currency;
 }

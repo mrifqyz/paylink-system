@@ -18,5 +18,6 @@ public class TransactionDTO {
     private String invoiceNumber;
     private BigInteger amount;
     private String currency;
-    private String expiredAt;
+    private Integer transactionDueDate;
+    private String fixedExpiredDate;
 }

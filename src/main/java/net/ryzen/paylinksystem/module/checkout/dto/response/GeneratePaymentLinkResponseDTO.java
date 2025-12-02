@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
-import net.ryzen.paylinksystem.module.checkout.dto.CustomerDTO;
-import net.ryzen.paylinksystem.module.checkout.dto.HeadersDTO;
-import net.ryzen.paylinksystem.module.checkout.dto.ItemDTO;
-import net.ryzen.paylinksystem.module.checkout.dto.TransactionDTO;
+import net.ryzen.paylinksystem.module.checkout.dto.*;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +20,7 @@ public class GeneratePaymentLinkResponseDTO {
     private List<ItemDTO> items;
     private CustomerDTO customer;
     private Map<String, Object> additionalInfo;
+    private PaymentDTO payment;
     private String uuid;
     private HeadersDTO headers;
 }

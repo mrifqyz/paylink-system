@@ -26,8 +26,10 @@ public class GeneratePaymentLinkController {
 
     //uses jwt
     @PostMapping("/internal/generate")
-    public ResponseEntity<?> doGeneratePaymentLinkInternal(@RequestBody GeneratePaymentLinkRequestDTO request) {
+    public ResponseEntity<?> doGeneratePaymentLinkInternal(@RequestBody GeneratePaymentLinkRequestDTO request,
+                                                           @RequestAttribute String clientEmail) {
         log.info("doGeneratePaymentLinkInternal: {}", request);
+        request.setClientEmail(clientEmail);
         return ResponseEntity.status(HttpStatus.OK).body(serviceExecutor.execute(GeneratePaymentLinkService.class, request));
     }
 }

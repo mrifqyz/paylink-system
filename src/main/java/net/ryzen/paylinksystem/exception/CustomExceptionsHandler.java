@@ -38,6 +38,20 @@ public class CustomExceptionsHandler {
         return setResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(DataNotFoundException.class)
+    public final ResponseEntity<Object> handleDataNotFoundException(DataNotFoundException ex) {
+        log.error("Handle DataNotFoundException => {}\n{} ", ex.getMessage(), this.getLogException(ex));
+
+        return setResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(IdempotentDataException.class)
+    public final ResponseEntity<Object> handleIdempotentDataException(IdempotentDataException ex) {
+        log.error("Handle IdempotentDataException => {}\n{} ", ex.getMessage(), this.getLogException(ex));
+
+        return setResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
     private String getLogException(Exception e) {
         return Arrays.stream(e.getStackTrace()).limit(limitLogError).map(StackTraceElement::toString).collect(Collectors.joining("\n"));
     }

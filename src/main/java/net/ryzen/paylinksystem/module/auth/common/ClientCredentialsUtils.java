@@ -23,16 +23,4 @@ public class ClientCredentialsUtils {
     public static String generateClientId(String prefix) {
         return prefix + generateSequence();
     }
-
-    public static String generateSharedKey(String prefix) {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder key = new StringBuilder(prefix);
-
-        for (int i = 0; i < 20; i++) {
-            int index = RANDOM.nextInt(characters.length());
-            key.append(characters.charAt(index));
-        }
-
-        return key.toString();
-    }
 }

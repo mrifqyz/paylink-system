@@ -49,4 +49,7 @@ public class Client {
 
     @Column(name = "default_expired")
     private Integer defaultExpired;
+
+    @Column(name = "session_prefix")
+    private String sessionPrefix;
 }

@@ -37,4 +37,7 @@ public class PaymentMethod {
 
     @Column(name = "category")
     private String category;
+
+    @Column(name = "currency")
+    private String currency;
 }
