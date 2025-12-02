@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0.1__add-session-prefix-to-client
+      author: mrifqyz
+      changes:
+        - addColumn:
+            tableName: client
+            columns:
+              - column:
+                  name: session_prefix
+                  type: VARCHAR(16)
+  - changeSet:
+      id: 1.0.1__add-email-and-client-to-customer
+      author: mrifqyz
+      changes:
+        - addColumn:
+            tableName: customer
+            columns:
+              - column:
+                  name: email
+                  type: VARCHAR(64)
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_customer_client
+                    references: client(id)
+  - changeSet:
+      id: 1.0.1__add-currency-to-payment-method
+      author: mrifqyz
+      changes:
+        - addColumn:
+            tableName: payment_method
+            columns:
+              - column:
+                  name: currency
+                  type: VARCHAR(8)
+  - changeSet:
+      id: 1.0.1__add-columns-to-transaction
+      author: mrifqyz
+      changes:
+        - addColumn:
+            tableName: transaction
+            columns:
+              - column:
+                  name: expired_date
+                  type: TIMESTAMP
+              - column:
+                  name: transaction_due_date
+                  type: INT
+              - column:
+                  name: currency
+                  type: VARCHAR(8)

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.ryzen.paylinksystem.common.jwt.JwtUtils;
 import net.ryzen.paylinksystem.common.utils.EncryptorUtils;
+import net.ryzen.paylinksystem.common.utils.StringUtils;
 import net.ryzen.paylinksystem.dto.JwtUtilsResponseDTO;
 import net.ryzen.paylinksystem.entity.Client;
 import net.ryzen.paylinksystem.enums.ResponseMessageEnum;
@@ -81,6 +82,6 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     private String generateSharedKey() {
-        return encryptorUtils.encrypt(ClientCredentialsUtils.generateSharedKey(dashboardAuthProperties.getSharedKeyPrefix()));
+        return encryptorUtils.encrypt(StringUtils.generateRandString(dashboardAuthProperties.getSharedKeyPrefix(), 20));
     }
 }
