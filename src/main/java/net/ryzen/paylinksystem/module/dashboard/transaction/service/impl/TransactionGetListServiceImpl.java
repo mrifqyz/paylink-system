@@ -63,6 +63,7 @@ public class TransactionGetListServiceImpl implements TransactionGetListService 
     private Specification<Transaction> buildSpecification(TransactionGetListRequestDTO request) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.like(root.get("client").get("clientId"), request.getClientId()));
 
             if (request.getFilter() != null) {
                 if (request.getFilter().getSearchKeyword() != null &&
