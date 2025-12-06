@@ -25,11 +25,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         if(publicUrls.contains(requestUri)) {
             return true;
         }
-        String userEmail = extractAndValidateToken(request, response);
-        if (userEmail == null) {
+        String clientId = extractAndValidateToken(request, response);
+        if (clientId == null) {
             return false;
         }
-        request.setAttribute("clientEmail", userEmail);
+        request.setAttribute("clientId", clientId);
         return true;
     }
 

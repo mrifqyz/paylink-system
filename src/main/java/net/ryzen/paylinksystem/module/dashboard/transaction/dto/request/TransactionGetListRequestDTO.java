@@ -24,7 +24,7 @@ public class TransactionGetListRequestDTO implements ServiceRequest {
     @JsonIgnore
     private Integer pageNo;
     @JsonIgnore
-    private String clientEmail;
+    private String clientId;
 
     private Filter filter;
     @Data

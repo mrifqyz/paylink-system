@@ -34,7 +34,7 @@ public class JwtUtils {
         Date expiryDate = new Date(System.currentTimeMillis() + jwtTokenProperties.getAccessTokenExpiry());
         return JwtUtilsResponseDTO.builder()
                 .token(Jwts.builder()
-                        .setSubject(user.getEmail())
+                        .setSubject(user.getClientId())
                         .setIssuedAt(new Date())
                         .setExpiration(expiryDate)
                         .signWith(key)
@@ -48,7 +48,7 @@ public class JwtUtils {
         return JwtUtilsResponseDTO.builder()
                 .expiryTime(expiryDate)
                 .token(Jwts.builder()
-                        .setSubject(user.getEmail())
+                        .setSubject(user.getClientId())
                         .setIssuedAt(new Date())
                         .setExpiration(expiryDate)
                         .signWith(key)

@@ -23,13 +23,13 @@ public class TransactionGetListController {
                                                   @Validated @RequestParam("page_size") Integer pageSize,
                                                   @Validated @RequestParam("sort_by") String sortBy,
                                                   @Validated @RequestParam("sort_type") String sortType,
-                                                  @RequestAttribute String clientEmail,
+                                                  @RequestAttribute String clientId,
                                                   @RequestBody TransactionGetListRequestDTO request) {
         request.setPageNo(pageNo);
         request.setPageSize(pageSize);
         request.setSortBy(sortBy);
         request.setSortType(sortType);
-        request.setClientEmail(clientEmail);
+        request.setClientId(clientId);
 
         log.info("doGetListTransaction request: {}", request);
 

@@ -79,9 +79,9 @@ public class GeneratePaymentLinkServiceImpl implements GeneratePaymentLinkServic
     }
 
     private Client getClient(GeneratePaymentLinkRequestDTO request) {
-        if (request.getClientEmail() != null) {
+        if (request.getClientId() != null) {
             log.debug("doGeneratePaymentLinkInternal: {}", request);
-            return clientRepository.findFirstByEmailAndIsActive(request.getClientEmail(), true)
+            return clientRepository.findFirstByEmailAndIsActive(request.getClientId(), true)
                     .orElseThrow(() -> new InvalidDataException(ResponseMessageEnum.DATA_NOT_FOUND.getMessage()));
         } else {
             log.debug("doGeneratePaymentLink: {}", request);
@@ -218,7 +218,7 @@ public class GeneratePaymentLinkServiceImpl implements GeneratePaymentLinkServic
     }
 
     private void validateSource(GeneratePaymentLinkRequestDTO request, Client client) {
-        if (request.getClientEmail() == null) {
+        if (request.getClientId() == null) {
             request.setHeaders(HeadersDTO.builder()
                     .clientId(client.getClientId())
                     .requestId(UUID.randomUUID().toString())
