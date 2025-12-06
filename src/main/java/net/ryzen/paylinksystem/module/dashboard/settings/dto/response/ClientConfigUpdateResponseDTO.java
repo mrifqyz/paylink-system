@@ -1,4 +1,4 @@
-package net.ryzen.paylinksystem.module.checkout.dto;
+package net.ryzen.paylinksystem.module.dashboard.settings.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,10 +12,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class PaymentMethodDTO {
-    private String paymentMethodId;
-    private String name;
-    private String code;
-    private String currency;
-    private Boolean isActive;
+public class ClientConfigUpdateResponseDTO {
+    private String message;
 }
