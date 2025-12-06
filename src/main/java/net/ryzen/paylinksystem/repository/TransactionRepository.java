@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,6 +22,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
     Optional<Transaction> findFirstByClient_clientIdAndId(String clientId, Long id);
 
-    @Query(value = "select t.* FROM transactions t", nativeQuery = true)
-    Page<Transaction> findTransactionsPage(Pageable client);
+    List<Transaction> findByClientAndCreatedDateBetween(Client client, Date startDate, Date endDate);
 }
