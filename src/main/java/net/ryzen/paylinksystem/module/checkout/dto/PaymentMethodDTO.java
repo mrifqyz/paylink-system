@@ -13,7 +13,9 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PaymentMethodDTO {
+    private String paymentMethodId;
     private String name;
     private String code;
     private String currency;
+    private Boolean isActive;
 }

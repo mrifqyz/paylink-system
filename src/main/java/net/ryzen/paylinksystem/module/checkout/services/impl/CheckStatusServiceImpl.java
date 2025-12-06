@@ -41,6 +41,6 @@ public class CheckStatusServiceImpl implements CheckStatusService {
     }
 
     private TransactionHistory getLatestTrxHist(Transaction trxCheckStatus) {
-        return transactionHistoryRepository.findById(trxCheckStatus.getId()).orElse(null);
+        return transactionHistoryRepository.findLatestTransaction(trxCheckStatus.getId()).orElse(null);
     }
 }
