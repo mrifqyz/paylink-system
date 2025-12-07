@@ -23,7 +23,7 @@ import java.util.Map;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GeneratePaymentLinkRequestDTO implements ServiceRequest {
     @JsonIgnore
-    private String clientEmail;
+    private String clientId;
     private HeadersDTO headers;
     private TransactionDTO transaction;
     private List<ItemDTO> items;

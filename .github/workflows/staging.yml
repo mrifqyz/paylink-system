@@ -114,3 +114,16 @@ jobs:
             REDIS_HOST_STAGING=${{ secrets.REDIS_HOST_STAGING }}
             REDIS_PORT_STAGING=${{ secrets.REDIS_PORT_STAGING }}
             REDIS_PASSWORD_STAGING=${{ secrets.REDIS_PASSWORD_STAGING }}
+
+      - name: Cleanup old container images
+        run: |-
+          LATEST_DIGEST=$(gcloud container images list-tags gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging \
+            --limit=1 --sort-by=~TIMESTAMP --format='get(digest)')
+
+          gcloud container images list-tags gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging \
+            --format='get(digest)' --filter="-digest:${LATEST_DIGEST}" | \
+          while IFS= read -r digest; do
+            if [ ! -z "$digest" ]; then
+              gcloud container images delete "gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging@${digest}" --quiet
+            fi
+          done

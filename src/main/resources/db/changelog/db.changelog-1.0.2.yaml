@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0.2__add-notification-columns-to-client
+      author: mrifqyz
+      changes:
+        - addColumn:
+            tableName: client
+            columns:
+              - column:
+                  name: notify_url
+                  type: VARCHAR(255)
+              - column:
+                  name: currency
+                  type: VARCHAR(8)
+              - column:
+                  name: is_notify_email
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: is_notify_http
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+      rollback:
+        - dropColumn:
+            tableName: client
+            columns:
+              - column:
+                  name: notify_url
+              - column:
+                  name: currency
+              - column:
+                  name: is_notify_email
+              - column:
+                  name: is_notify_http

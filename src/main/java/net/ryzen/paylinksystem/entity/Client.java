@@ -52,4 +52,16 @@ public class Client {
 
     @Column(name = "session_prefix")
     private String sessionPrefix;
+
+    @Column(name = "notify_url")
+    private String notifyUrl;
+
+    @Column(name = "currency")
+    private String currency;
+
+    @Column(name = "is_notify_email")
+    private Boolean isNotifyEmail;
+
+    @Column(name = "is_notify_http")
+    private Boolean isNotifyHttp;
 }
