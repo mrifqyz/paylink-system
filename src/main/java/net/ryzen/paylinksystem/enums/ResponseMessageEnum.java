@@ -14,6 +14,7 @@ public enum ResponseMessageEnum {
     AMOUNT_NOT_MATCH("Total amount and item data not match"),
     TRX_UNPROCESSABLE("Transactions conflict"),
     TRX_ALREADY_SUCCESS("Transaction already success"),
+    FAILED_GENERATE_RSA("Failed generating RSA"),
     PAYMENT_CHANNEL_INACTIVE("Payment Channel Inactive. Please contact your payment initiator (merchant)");
 
     private final String message;
