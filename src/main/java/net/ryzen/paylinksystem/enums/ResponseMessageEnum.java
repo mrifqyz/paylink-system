@@ -15,6 +15,7 @@ public enum ResponseMessageEnum {
     TRX_UNPROCESSABLE("Transactions conflict"),
     TRX_ALREADY_SUCCESS("Transaction already success"),
     FAILED_GENERATE_RSA("Failed generating RSA"),
+    INVALID_CARD_NUMBER("Invalid card number"),
     PAYMENT_CHANNEL_INACTIVE("Payment Channel Inactive. Please contact your payment initiator (merchant)");
 
     private final String message;
