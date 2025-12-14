@@ -3,6 +3,7 @@ package net.ryzen.paylinksystem.module.payment.cc.service.impl;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.ryzen.paylinksystem.enums.RedisKeyEnum;
 import net.ryzen.paylinksystem.enums.ResponseMessageEnum;
 import net.ryzen.paylinksystem.exception.DataNotFoundException;
 import net.ryzen.paylinksystem.module.payment.cc.common.LuhnValidator;
@@ -14,8 +15,11 @@ import net.ryzen.paylinksystem.module.payment.cc.dto.response.CheckCardResponseD
 import net.ryzen.paylinksystem.module.payment.cc.service.contract.CheckCardService;
 import net.ryzen.paylinksystem.repository.TransactionRepository;
 import net.ryzen.paylinksystem.service.RestService;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class CheckCardServiceImpl implements CheckCardService {
     private final TransactionRepository transactionRepository;
     private final CreditCardPaymentProperties creditCardPaymentProperties;
     private final RestService restService;
+    private final RedisTemplate<String, String> redisTemplate;
     @Override
     public CheckCardResponseDTO execute(CheckCardRequestDTO request) {
 
@@ -37,6 +42,7 @@ public class CheckCardServiceImpl implements CheckCardService {
         var requestToCore = buildRequestToCore(request);
         var responseFromCore = hitToCore(requestToCore, request);
 
+        storeDataBin3dsToRedis(request, responseFromCore);
         return buildResponse(responseFromCore);
     }
 
@@ -68,5 +74,10 @@ public class CheckCardServiceImpl implements CheckCardService {
                 .isValid(true)
                 .isUse3ds(responseFromCore.getIsUse3ds())
                 .build();
+    }
+
+    private void storeDataBin3dsToRedis(CheckCardRequestDTO request, CheckBinInstallment3dsResponseDTO responseCore){
+        String redisKey = RedisKeyEnum.FRICTIONLESS_3DS_CHECK.getKey().formatted(request.getClientId(), request.getTokenId(), request.getRequestId(), request.getCardNumber().substring(0, 6));
+        redisTemplate.opsForValue().set(redisKey, new Gson().toJson(responseCore), RedisKeyEnum.FRICTIONLESS_3DS_CHECK.getExpiredSeconds(), TimeUnit.SECONDS);
     }
 }
