@@ -11,4 +11,8 @@ public class CreditCardPaymentProperties {
     private String checkBinUrl;
     private String threeDoSecureUrl;
     private String creditCardChargeUrl;
+    private String creditCard3dsCoreUrl;
+    private String callbackUrl;
+    private String frontendRedirectUrlSuccess;
+    private String frontendRedirectUrlFailed;
 }
