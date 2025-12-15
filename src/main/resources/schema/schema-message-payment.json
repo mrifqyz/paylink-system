@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Payment Transaction Schema",
+  "type": "object",
+  "required": [
+    "client",
+    "channel",
+    "payment",
+    "transaction"
+  ],
+  "properties": {
+    "client": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "status"
+      ]
+    },
+    "channel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "payment": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "paymentDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "paymentRequestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "paymentDate",
+        "paymentRequestId"
+      ]
+    },
+    "transaction": {
+      "type": "object",
+      "properties": {
+        "invoiceNumber": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoiceNumber",
+        "amount",
+        "currency",
+        "requestId"
+      ]
+    },
+    "cardPayment": {
+      "type": "object",
+      "description": "Optional container for credit card payment details",
+      "properties": {
+        "installmentTenor": {
+          "type": "integer"
+        },
+        "tokenizationId": {
+          "type": "string"
+        },
+        "settlementDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "settlementStatus": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "issuer": {
+          "type": "string"
+        },
+        "cardData": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "status"
+      ]
+    },
+    "bankTransferPayment": {
+      "type": "object",
+      "description": "Optional container for bank transfer details",
+      "properties": {
+        "accountNumber": {
+          "type": "string"
+        },
+        "bankName": {
+          "type": "string"
+        },
+        "bankBranchNumber": {
+          "type": "integer"
+        },
+        "bankBranchName": {
+          "type": "string"
+        },
+        "accountType": {
+          "type": "string"
+        },
+        "recipientName": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
+  }
+}
