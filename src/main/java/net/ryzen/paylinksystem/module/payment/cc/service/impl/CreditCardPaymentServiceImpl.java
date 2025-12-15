@@ -18,6 +18,7 @@ import net.ryzen.paylinksystem.module.payment.cc.dto.external.request.CreditCard
 import net.ryzen.paylinksystem.module.payment.cc.dto.external.request.ThreeDoSecurePaymentRequestDTO;
 import net.ryzen.paylinksystem.module.payment.cc.dto.external.response.CheckBinInstallment3dsResponseDTO;
 import net.ryzen.paylinksystem.module.payment.cc.dto.external.response.CreditCardChargeResponseDTO;
+import net.ryzen.paylinksystem.module.payment.cc.dto.external.response.ThreeDoSecurePaymentResponseDTO;
 import net.ryzen.paylinksystem.module.payment.cc.dto.request.CreditCardPaymentRequestDTO;
 import net.ryzen.paylinksystem.module.payment.cc.dto.response.CreditCardPaymentResponseDTO;
 import net.ryzen.paylinksystem.module.payment.cc.service.contract.CreditCardPaymentService;
@@ -158,13 +159,13 @@ public class CreditCardPaymentServiceImpl implements CreditCardPaymentService {
         return new Gson().fromJson(response, CreditCardChargeResponseDTO.class);
     }
 
-    private CreditCardChargeResponseDTO hitToCore3dsPayment(CreditCardPaymentRequestDTO request, ThreeDoSecurePaymentRequestDTO requestToCore) {
+    private ThreeDoSecurePaymentResponseDTO hitToCore3dsPayment(CreditCardPaymentRequestDTO request, ThreeDoSecurePaymentRequestDTO requestToCore) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Client-Id", request.getRequestId());
         headers.set("Request-Id", request.getRequestId());
 
         String response = restService.httpPostWithHeader(creditCardPaymentProperties.getCreditCard3dsCoreUrl(), requestToCore, headers);
-        return new Gson().fromJson(response, CreditCardChargeResponseDTO.class);
+        return new Gson().fromJson(response, ThreeDoSecurePaymentResponseDTO.class);
     }
 
     private String buildCallbackUrl(CreditCardPaymentRequestDTO request, String status) {
