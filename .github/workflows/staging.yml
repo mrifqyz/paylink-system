@@ -59,7 +59,6 @@ jobs:
     runs-on: [self-hosted, mrifqyz]
     environment:
       name: staging
-      url: http://${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PORT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
