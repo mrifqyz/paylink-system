@@ -23,4 +23,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
     Optional<Transaction> findFirstByClient_clientIdAndId(String clientId, Long id);
 
     List<Transaction> findByClientAndCreatedDateBetween(Client client, Date startDate, Date endDate);
+
+    Optional<Transaction> findFirstByTokenIdAndRequestIdAndClient_ClientId(String tokenId, String requestId, String clientId);
 }

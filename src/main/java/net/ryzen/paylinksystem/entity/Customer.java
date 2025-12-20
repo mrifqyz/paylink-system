@@ -41,4 +41,7 @@ public class Customer {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
+    @Column(name = "identifier")
+    private String identifier;
 }
