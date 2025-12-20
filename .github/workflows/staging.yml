@@ -97,7 +97,7 @@ jobs:
           DB_PASSWORD_STAGING: ${{ secrets.DB_PASSWORD_STAGING }}
           JWT_SECRET_STAGING: ${{ secrets.JWT_SECRET_STAGING }}
           REDIS_PASSWORD_STAGING: ${{ secrets.REDIS_PASSWORD_STAGING }}
-          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_JSON }}
+          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
           AES_KEY_STAGING: ${{ secrets.AES_KEY_STAGING }}
           AES_IV_STAGING: ${{ secrets.AES_IV_STAGING }}
 
