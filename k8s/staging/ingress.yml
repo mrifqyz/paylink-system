@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: paylink-system-staging
+  namespace: paylink-staging
+  labels:
+    app: paylink-system
+    environment: staging
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: ${STAGING_DOMAIN}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: paylink-system-staging
+            port:
+              number: 8080
+  # Uncomment if you want to use TLS/SSL
+  # tls:
+  # - hosts:
+  #   - ${STAGING_DOMAIN}
+  #   secretName: paylink-system-staging-tls

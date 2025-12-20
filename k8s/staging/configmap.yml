@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paylink-system-staging-config
+  namespace: paylink-staging
+data:
+  SPRING_PROFILES_ACTIVE: "staging"
+  ALLOWED_URL_STAGING: "${ALLOWED_URL_STAGING}"
+  REDIS_HOST_STAGING: "${REDIS_HOST_STAGING}"
+  REDIS_PORT_STAGING: "${REDIS_PORT_STAGING}"
+  JAVA_OPTS: "-Xmx512m -Xms256m"
