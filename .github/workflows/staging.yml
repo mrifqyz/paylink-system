@@ -90,16 +90,17 @@ jobs:
 
       - name: Create Kubernetes secrets
         run: |-
-          envsubst < k8s/staging/secret.yml | kubectl apply -f -
-        env:
-          DB_URL_STAGING: ${{ secrets.DB_URL_STAGING }}
-          DB_USERNAME_STAGING: ${{ secrets.DB_USERNAME_STAGING }}
-          DB_PASSWORD_STAGING: ${{ secrets.DB_PASSWORD_STAGING }}
-          JWT_SECRET_STAGING: ${{ secrets.JWT_SECRET_STAGING }}
-          REDIS_PASSWORD_STAGING: ${{ secrets.REDIS_PASSWORD_STAGING }}
-          GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
-          AES_KEY_STAGING: ${{ secrets.AES_KEY_STAGING }}
-          AES_IV_STAGING: ${{ secrets.AES_IV_STAGING }}
+          kubectl create secret generic paylink-system-staging-secret \
+            --from-literal=DB_URL_STAGING="${{ secrets.DB_URL_STAGING }}" \
+            --from-literal=DB_USERNAME_STAGING="${{ secrets.DB_USERNAME_STAGING }}" \
+            --from-literal=DB_PASSWORD_STAGING="${{ secrets.DB_PASSWORD_STAGING }}" \
+            --from-literal=JWT_SECRET_STAGING="${{ secrets.JWT_SECRET_STAGING }}" \
+            --from-literal=REDIS_PASSWORD_STAGING="${{ secrets.REDIS_PASSWORD_STAGING }}" \
+            --from-literal=AES_KEY_STAGING="${{ secrets.AES_KEY_STAGING }}" \
+            --from-literal=AES_IV_STAGING="${{ secrets.AES_IV_STAGING }}" \
+            --from-literal=GCP_CREDENTIALS='${{ secrets.GCP_CREDENTIALS_JSON }}' \
+            --namespace=paylink-staging \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Create Kubernetes ConfigMap
         run: |-
