@@ -87,7 +87,7 @@ jobs:
       - name: Save and import image to k3s
         run: |-
           docker save paylink-system-staging:latest -o /tmp/paylink-system-staging.tar
-          sudo k3s ctr images import /tmp/paylink-system-staging.tar
+          ctr -a /run/k3s/containerd/containerd.sock -n k8s.io images import /tmp/paylink-system-staging.tar
           rm -f /tmp/paylink-system-staging.tar
 
       - name: Apply Kubernetes namespace
