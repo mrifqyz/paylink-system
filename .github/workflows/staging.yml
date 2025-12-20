@@ -56,10 +56,9 @@ jobs:
 
   deploy-staging:
     if: github.ref == 'refs/heads/development' && github.event_name == 'push'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, mrifqyz]
     environment:
       name: staging
-      url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -70,14 +69,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build
-        run: mvn -B package -DskipTests --file pom.xml
-        
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
       - name: Run Liquibase Migrations
         run: |-
           mvn -e liquibase:update \
@@ -87,43 +78,74 @@ jobs:
             -Dliquibase.changeLogFile=src/main/resources/db/master.changelog.yaml \
             -Dliquibase.driver=org.postgresql.Driver
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-
-      - name: Build and push container image
+      - name: Build Docker image
         run: |-
-          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging
+          docker build -t paylink-system-staging:latest \
+            -t paylink-system-staging:${{ github.sha }} .
 
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: paylink-system-staging
-          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging
-          region: ${{ secrets.GCP_REGION }}
-          platform: managed
-          allow-unauthenticated: true
-          timeout: 900s
-          env_vars: |
-            SPRING_PROFILES_ACTIVE=staging
-            DB_URL_STAGING=${{ secrets.DB_URL_STAGING }}
-            DB_USERNAME_STAGING=${{ secrets.DB_USERNAME_STAGING }}
-            DB_PASSWORD_STAGING=${{ secrets.DB_PASSWORD_STAGING }}
-            JWT_SECRET_STAGING=${{ secrets.JWT_SECRET_STAGING }}
-            ALLOWED_URL_STAGING=${{ secrets.ALLOWED_URL_STAGING }}
-            REDIS_HOST_STAGING=${{ secrets.REDIS_HOST_STAGING }}
-            REDIS_PORT_STAGING=${{ secrets.REDIS_PORT_STAGING }}
-            REDIS_PASSWORD_STAGING=${{ secrets.REDIS_PASSWORD_STAGING }}
-
-      - name: Cleanup old container images
+      - name: Save and import image to k3s
         run: |-
-          LATEST_DIGEST=$(gcloud container images list-tags gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging \
-            --limit=1 --sort-by=~TIMESTAMP --format='get(digest)')
+          docker save paylink-system-staging:latest -o /tmp/paylink-system-staging.tar
+          sudo k3s ctr images import /tmp/paylink-system-staging.tar
+          rm -f /tmp/paylink-system-staging.tar
 
-          gcloud container images list-tags gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging \
-            --format='get(digest)' --filter="-digest:${LATEST_DIGEST}" | \
-          while IFS= read -r digest; do
-            if [ ! -z "$digest" ]; then
-              gcloud container images delete "gcr.io/${{ secrets.GCP_PROJECT_ID }}/paylink-system-staging@${digest}" --quiet
+      - name: Apply Kubernetes namespace
+        run: |-
+          kubectl apply -f k8s/staging/namespace.yml
+
+      - name: Create Kubernetes secrets
+        run: |-
+          envsubst < k8s/staging/secret.yml | kubectl apply -f -
+        env:
+          DB_URL_STAGING: ${{ secrets.DB_URL_STAGING }}
+          DB_USERNAME_STAGING: ${{ secrets.DB_USERNAME_STAGING }}
+          DB_PASSWORD_STAGING: ${{ secrets.DB_PASSWORD_STAGING }}
+          JWT_SECRET_STAGING: ${{ secrets.JWT_SECRET_STAGING }}
+          REDIS_PASSWORD_STAGING: ${{ secrets.REDIS_PASSWORD_STAGING }}
+
+      - name: Create Kubernetes ConfigMap
+        run: |-
+          envsubst < k8s/staging/configmap.yml | kubectl apply -f -
+        env:
+          ALLOWED_URL_STAGING: ${{ secrets.ALLOWED_URL_STAGING }}
+          REDIS_HOST_STAGING: ${{ secrets.REDIS_HOST_STAGING }}
+          REDIS_PORT_STAGING: ${{ secrets.REDIS_PORT_STAGING }}
+
+      - name: Apply Kubernetes manifests
+        run: |-
+          kubectl apply -f k8s/staging/deployment.yml
+          kubectl apply -f k8s/staging/service.yml
+          envsubst < k8s/staging/ingress.yml | kubectl apply -f -
+        env:
+          STAGING_DOMAIN: ${{ secrets.STAGING_DOMAIN }}
+
+      - name: Restart deployment to pull new image
+        run: |-
+          kubectl rollout restart deployment/paylink-system-staging -n paylink-staging
+
+      - name: Wait for deployment to be ready
+        run: |-
+          kubectl rollout status deployment/paylink-system-staging -n paylink-staging --timeout=5m
+
+      - name: Verify deployment health
+        run: |-
+          echo "Checking pod status..."
+          kubectl get pods -n paylink-staging -l app=paylink-system
+
+          echo "Waiting for application to be healthy..."
+          for i in {1..30}; do
+            POD_NAME=$(kubectl get pods -n paylink-staging -l app=paylink-system -o jsonpath='{.items[0].metadata.name}')
+            if kubectl exec -n paylink-staging $POD_NAME -- wget --spider -q http://localhost:8080/actuator/health; then
+              echo "Application is healthy!"
+              exit 0
             fi
+            echo "Attempt $i: Application not ready yet..."
+            sleep 5
           done
+          echo "Application failed to start in time"
+          kubectl logs -n paylink-staging -l app=paylink-system --tail=100
+          exit 1
+
+      - name: Cleanup old Docker images
+        run: |-
+          docker image prune -af --filter "label!=keep" --filter "until=24h" || true

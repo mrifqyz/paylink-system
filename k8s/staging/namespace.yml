@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: paylink-staging
+  labels:
+    name: paylink-staging
+    environment: staging

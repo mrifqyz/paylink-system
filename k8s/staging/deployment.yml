@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paylink-system-staging
+  namespace: paylink-staging
+  labels:
+    app: paylink-system
+    environment: staging
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: paylink-system
+      environment: staging
+  template:
+    metadata:
+      labels:
+        app: paylink-system
+        environment: staging
+    spec:
+      containers:
+      - name: paylink-system
+        image: paylink-system-staging:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: paylink-system-staging-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: JAVA_OPTS
+          valueFrom:
+            configMapKeyRef:
+              name: paylink-system-staging-config
+              key: JAVA_OPTS
+        - name: ALLOWED_URL_STAGING
+          valueFrom:
+            configMapKeyRef:
+              name: paylink-system-staging-config
+              key: ALLOWED_URL_STAGING
+        - name: REDIS_HOST_STAGING
+          valueFrom:
+            configMapKeyRef:
+              name: paylink-system-staging-config
+              key: REDIS_HOST_STAGING
+        - name: REDIS_PORT_STAGING
+          valueFrom:
+            configMapKeyRef:
+              name: paylink-system-staging-config
+              key: REDIS_PORT_STAGING
+        - name: DB_URL_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: DB_URL_STAGING
+        - name: DB_USERNAME_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: DB_USERNAME_STAGING
+        - name: DB_PASSWORD_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: DB_PASSWORD_STAGING
+        - name: JWT_SECRET_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: JWT_SECRET_STAGING
+        - name: REDIS_PASSWORD_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: REDIS_PASSWORD_STAGING
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      restartPolicy: Always
