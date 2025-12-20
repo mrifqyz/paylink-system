@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: ${STAGING_DOMAIN}
+  - host: api-staging.mrifqyz.my.id
     http:
       paths:
       - path: /

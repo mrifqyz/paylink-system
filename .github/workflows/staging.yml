@@ -114,9 +114,7 @@ jobs:
         run: |-
           kubectl apply -f k8s/staging/deployment.yml
           kubectl apply -f k8s/staging/service.yml
-          envsubst < k8s/staging/ingress.yml | kubectl apply -f -
-        env:
-          STAGING_DOMAIN: ${{ secrets.STAGING_DOMAIN }}
+          kubectl apply -f k8s/staging/ingress.yml
 
       - name: Restart deployment to pull new image
         run: |-
