@@ -82,6 +82,22 @@ spec:
             secretKeyRef:
               name: paylink-system-staging-secret
               key: REDIS_PASSWORD_STAGING
+        - name: AES_KEY_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: AES_KEY_STAGING
+        - name: AES_IV_STAGING
+          valueFrom:
+            secretKeyRef:
+              name: paylink-system-staging-secret
+              key: AES_IV_STAGING
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/gcp-credentials.json
+        volumeMounts:
+        - name: gcp-credentials
+          mountPath: /var/secrets/google
+          readOnly: true
         resources:
           requests:
             memory: "256Mi"
@@ -105,4 +121,11 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
+      volumes:
+      - name: gcp-credentials
+        secret:
+          secretName: paylink-system-staging-secret
+          items:
+          - key: GCP_CREDENTIALS
+            path: gcp-credentials.json
       restartPolicy: Always
