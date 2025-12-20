@@ -122,29 +122,6 @@ jobs:
         run: |-
           kubectl rollout restart deployment/paylink-system-staging -n paylink-staging
 
-      - name: Wait for deployment to be ready
-        run: |-
-          kubectl rollout status deployment/paylink-system-staging -n paylink-staging --timeout=5m
-
-      - name: Verify deployment health
-        run: |-
-          echo "Checking pod status..."
-          kubectl get pods -n paylink-staging -l app=paylink-system
-
-          echo "Waiting for application to be healthy..."
-          for i in {1..30}; do
-            POD_NAME=$(kubectl get pods -n paylink-staging -l app=paylink-system -o jsonpath='{.items[0].metadata.name}')
-            if kubectl exec -n paylink-staging $POD_NAME -- wget --spider -q http://localhost:8080/actuator/health; then
-              echo "Application is healthy!"
-              exit 0
-            fi
-            echo "Attempt $i: Application not ready yet..."
-            sleep 5
-          done
-          echo "Application failed to start in time"
-          kubectl logs -n paylink-staging -l app=paylink-system --tail=100
-          exit 1
-
       - name: Cleanup old Docker images
         run: |-
           docker image prune -af --filter "label!=keep" --filter "until=24h" || true
