@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/paylink/v1/credit-card")
+@RequestMapping("/v1/credit-card")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class CreditCardPaymentController {

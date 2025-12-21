@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/paylink/v1")
+@RequestMapping("/v1")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class GeneratePaymentLinkController {

@@ -43,7 +43,7 @@ public class SpringSecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/dashboard/auth/login", "/dashboard/auth/register", "/paylink/**").permitAll()
+                        .requestMatchers("/dashboard/auth/login", "/dashboard/auth/register", "/v1/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/health/**", "/actuator/prometheus", "/actuator/metrics/**").permitAll()
                         .anyRequest().authenticated()

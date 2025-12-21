@@ -15,7 +15,7 @@ spec:
   - host: api-staging.mrifqyz.my.id
     http:
       paths:
-      - path: /
+      - path: /paylink
         pathType: Prefix
         backend:
           service:

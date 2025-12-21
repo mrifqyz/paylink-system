@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/paylink/v1/bank-transfer")
+@RequestMapping("/v1/bank-transfer")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class GenerateBankTransferNumberController {
