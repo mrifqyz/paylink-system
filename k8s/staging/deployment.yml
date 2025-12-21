@@ -107,7 +107,7 @@ spec:
             cpu: "1000m"
         livenessProbe:
           httpGet:
-            path: /actuator/health/liveness
+            path: /paylink/actuator/health/liveness
             port: 8080
           initialDelaySeconds: 180
           periodSeconds: 10
@@ -115,7 +115,7 @@ spec:
           failureThreshold: 5
         readinessProbe:
           httpGet:
-            path: /actuator/health/readiness
+            path: /paylink/actuator/health/readiness
             port: 8080
           initialDelaySeconds: 150
           periodSeconds: 10
